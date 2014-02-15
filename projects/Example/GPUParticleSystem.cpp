@@ -75,7 +75,7 @@ void GPUParticleEmitter::createBuffers()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)12);
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)24);
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)28);
-
+	
 	glBindVertexArray(m_vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, m_maxParticles * sizeof(GPUParticle), 0, GL_STREAM_DRAW);
@@ -88,7 +88,7 @@ void GPUParticleEmitter::createBuffers()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)12);
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)24);
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)28);
-
+	
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -109,7 +109,7 @@ void GPUParticleEmitter::createDrawShader()
 	glUseProgram(m_drawShader);
 
 	// bind size information for interpolation that wont change
-	unsigned int location = glGetUniformLocation(m_drawShader,"sizeStart");
+	int location = glGetUniformLocation(m_drawShader,"sizeStart");
 	glUniform1f(location, m_startSize);
 	location = glGetUniformLocation(m_drawShader,"sizeEnd");
 	glUniform1f(location, m_endSize);
@@ -139,7 +139,7 @@ void GPUParticleEmitter::createUpdateShader()
 	glUseProgram(m_updateShader);
 	
 	// bind lifetime minimum and maximum
-	unsigned int location = glGetUniformLocation(m_updateShader,"lifeMin");
+	int location = glGetUniformLocation(m_updateShader,"lifeMin");
 	glUniform1f(location, m_lifespanMin);
 	location = glGetUniformLocation(m_updateShader,"lifeMax");
 	glUniform1f(location, m_lifespanMax);
@@ -157,8 +157,9 @@ void GPUParticleEmitter::draw(const glm::mat4& a_view, const glm::mat4& a_projec
 	glUseProgram(m_updateShader);
 
 	// bind time information
-	unsigned int location = glGetUniformLocation(m_updateShader,"time");
+	int location = glGetUniformLocation(m_updateShader,"time");
 	glUniform1f(location, Utility::getTotalTime());
+
 	location = glGetUniformLocation(m_updateShader,"deltaTime");
 	glUniform1f(location, Utility::getDeltaTime());
 
@@ -185,7 +186,7 @@ void GPUParticleEmitter::draw(const glm::mat4& a_view, const glm::mat4& a_projec
 	glEndTransformFeedback();
 	glDisable(GL_RASTERIZER_DISCARD);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, 0);
-
+	
 	//////////////////////////////////////////////////////////////////////////
 	// draw the particles using the Geometry SHader to billboard them
 	glUseProgram(m_drawShader);
@@ -199,7 +200,7 @@ void GPUParticleEmitter::draw(const glm::mat4& a_view, const glm::mat4& a_projec
 	// draw particles in the "other" buffer
 	glBindVertexArray(m_vao[ otherBuffer]);
 	glDrawArrays(GL_POINTS, 0, m_maxParticles);
-
+	
 	// swap for next frame
 	m_activeBuffer = otherBuffer;
 }

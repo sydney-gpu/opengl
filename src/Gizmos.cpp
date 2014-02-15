@@ -671,7 +671,7 @@ void Gizmos::draw(const glm::mat4& a_projectionView)
 	{
 		glUseProgram(sm_singleton->m_programID);
 		
-		unsigned int projectionViewUniform = glGetUniformLocation(sm_singleton->m_programID,"ProjectionView");
+		int projectionViewUniform = glGetUniformLocation(sm_singleton->m_programID,"ProjectionView");
 		glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(a_projectionView));
 
 		if (sm_singleton->m_lineCount > 0)
