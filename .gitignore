@@ -2,6 +2,7 @@
 *.slo
 *.lo
 *.o
+*.obj
 
 # Compiled Dynamic libraries
 *.so
@@ -11,3 +12,11 @@
 *.lai
 *.la
 *.a
+
+# Visual Studio files
+*.log
+*.tlog
+*.ilk
+*.idb
+*.lastbuild
+*.unsuccessfullbuild
