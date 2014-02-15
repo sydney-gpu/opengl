@@ -1,9 +1,9 @@
-#version 150
+#version 330
 
-in vec3 Position;
-in vec3 Velocity;
-in float Lifetime;
-in float Lifespan;
+layout( location = 0 ) in vec3 Position;
+layout( location = 1 ) in vec3 Velocity;
+layout( location = 2 ) in float Lifetime;
+layout( location = 3 ) in float Lifespan;
 
 out vec3 position;
 out vec3 velocity;

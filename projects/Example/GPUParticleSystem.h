@@ -26,7 +26,7 @@ public:
 					  float a_startSize, float a_endSize,
 					  const glm::vec4& a_startColour, const glm::vec4& a_endColour);
 
-	void	draw(const glm::mat4& a_cameraTransform, const glm::mat4& a_projection);
+	void	draw(const glm::mat4& a_view, const glm::mat4& a_projection);
 
 	void	setPosition(const glm::vec3 a_position)	{	m_position = a_position;	}
 

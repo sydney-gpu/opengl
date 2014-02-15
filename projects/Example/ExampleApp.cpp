@@ -24,7 +24,7 @@ bool ExampleApp::onCreate(int a_argc, char* a_argv[])
 	Gizmos::create();
 
 	// create a world-space matrix for a camera
-	m_cameraMatrix = glm::inverse( glm::lookAt(glm::vec3(10,10,10),glm::vec3(0,0,0), glm::vec3(0,1,0)) );
+	m_cameraMatrix = glm::inverse( glm::lookAt(glm::vec3(200,200,200),glm::vec3(0,0,0), glm::vec3(0,1,0)) );
 	
 	// create a perspective projection matrix with a 90 degree field-of-view and widescreen aspect ratio
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, DEFAULT_SCREENWIDTH/(float)DEFAULT_SCREENHEIGHT, 0.1f, 1000.0f);
@@ -36,7 +36,7 @@ bool ExampleApp::onCreate(int a_argc, char* a_argv[])
 
 	m_emitter = new GPUParticleEmitter();
 	m_emitter->initalise(1000000, 
-						 0.1f, 20.0f, 1, 1, 0.5f, 0.05f,
+						 0.1f, 10.0f, 15, 25, 0.5f, 0.05f,
 						 glm::vec4(1,1,0,1), glm::vec4(1,0,0,1));
 
 	return true;
@@ -72,11 +72,11 @@ void ExampleApp::onDraw()
 {
 	// clear the backbuffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	m_emitter->draw(m_cameraMatrix, m_projectionMatrix);
 	
 	// get the view matrix from the world-space camera matrix
 	glm::mat4 viewMatrix = glm::inverse( m_cameraMatrix );
+
+	m_emitter->draw(viewMatrix, m_projectionMatrix);
 	
 	// draw the gizmos from this frame
 	Gizmos::draw(viewMatrix, m_projectionMatrix);

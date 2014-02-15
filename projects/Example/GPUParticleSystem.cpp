@@ -71,10 +71,10 @@ void GPUParticleEmitter::createBuffers()
 	glEnableVertexAttribArray(1); // velocity
 	glEnableVertexAttribArray(2); // lifetime
 	glEnableVertexAttribArray(3); // lifespan
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), ((char*)0) + 12);
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), ((char*)0) + 24);
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), ((char*)0) + 28);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)12);
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)24);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)28);
 
 	glBindVertexArray(m_vao[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
@@ -84,10 +84,10 @@ void GPUParticleEmitter::createBuffers()
 	glEnableVertexAttribArray(1); // velocity
 	glEnableVertexAttribArray(2); // lifetime
 	glEnableVertexAttribArray(3); // lifespan
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), ((char*)0) + 12);
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), ((char*)0) + 24);
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), ((char*)0) + 28);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)12);
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)24);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(GPUParticle), (char*)28);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -98,8 +98,7 @@ void GPUParticleEmitter::createDrawShader()
 	unsigned int vs = Utility::loadShader("particle.vert", GL_VERTEX_SHADER);
 	unsigned int fs = Utility::loadShader("particle.frag", GL_FRAGMENT_SHADER);
 	unsigned int gs = Utility::loadShader("particle.geom", GL_GEOMETRY_SHADER);
-	const char* inputs[] = { "Position", "Velocity", "Lifetime", "Lifespan"  };
-	m_drawShader = Utility::createProgram(vs, 0, 0, gs, fs, 4, inputs);
+	m_drawShader = Utility::createProgram(vs, 0, 0, gs, fs);
 	
 	// remove unneeded handles
 	glDeleteShader(vs);
@@ -124,28 +123,13 @@ void GPUParticleEmitter::createDrawShader()
 
 void GPUParticleEmitter::createUpdateShader()
 {
-	// load a text file into an unsigned char buffer
-	unsigned char* source = Utility::fileToBuffer("particleUpdate.vert");
+	unsigned int vs = Utility::loadShader("particleUpdate.vert", GL_VERTEX_SHADER);
 
-	// create a shader ourselves
-	unsigned int vs = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vs, 1, (const char**)&source, 0);
-	glCompileShader(vs);
-
-	delete[] source;
-
+	// manually build shader so that we can set transform feedback varyings
 	m_updateShader = glCreateProgram();
 	glAttachShader(m_updateShader, vs);
-
-	// set the inputs (not needed if using layout(location) shader tags)
-	glBindAttribLocation(m_updateShader, 0, "Position");
-	glBindAttribLocation(m_updateShader, 1, "Velocity");
-	glBindAttribLocation(m_updateShader, 2, "Lifetime");
-	glBindAttribLocation(m_updateShader, 3, "Lifespan");
-
 	const char* varyings[] = { "position", "velocity", "lifetime", "lifespan"  };
-	glTransformFeedbackVaryings(m_updateShader, 4, varyings, GL_INTERLEAVED_ATTRIBS);
-	
+	glTransformFeedbackVaryings(m_updateShader, 4, varyings, GL_INTERLEAVED_ATTRIBS);	
 	glLinkProgram(m_updateShader);
 	
 	// remove unneeded handles
@@ -166,7 +150,7 @@ void GPUParticleEmitter::createUpdateShader()
 	glUniform1f(location, m_velocityMax);
 }
 
-void GPUParticleEmitter::draw(const glm::mat4& a_cameraTransform, const glm::mat4& a_projection)
+void GPUParticleEmitter::draw(const glm::mat4& a_view, const glm::mat4& a_projection)
 {
 	//////////////////////////////////////////////////////////////////////////
 	// update the particles using a vertex shader and transform feedback
@@ -206,17 +190,12 @@ void GPUParticleEmitter::draw(const glm::mat4& a_cameraTransform, const glm::mat
 	// draw the particles using the Geometry SHader to billboard them
 	glUseProgram(m_drawShader);
 
-	glm::mat4 viewMatrix = glm::inverse( a_cameraTransform );
-
 	location = glGetUniformLocation(m_drawShader,"projection");
 	glUniformMatrix4fv(location, 1, false, glm::value_ptr(a_projection));
 
 	location = glGetUniformLocation(m_drawShader,"view");
-	glUniformMatrix4fv(location, 1, false, glm::value_ptr(viewMatrix));
-
-	location = glGetUniformLocation(m_drawShader,"cameraTransform");
-	glUniformMatrix4fv(location, 1, false, glm::value_ptr(a_cameraTransform));
-
+	glUniformMatrix4fv(location, 1, false, glm::value_ptr(a_view));
+	
 	// draw particles in the "other" buffer
 	glBindVertexArray(m_vao[ otherBuffer]);
 	glDrawArrays(GL_POINTS, 0, m_maxParticles);
