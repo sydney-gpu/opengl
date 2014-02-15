@@ -20,3 +20,7 @@
 *.idb
 *.lastbuild
 *.unsuccessfullbuild
+*.suo
+*.sdf
+*.opensdf
+*.lastbuildstate
