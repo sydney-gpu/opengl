@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <glm/ext.hpp>
 
@@ -247,7 +247,7 @@ void Utility::freeMovement(glm::mat4& a_transform, float a_deltaTime, float a_sp
 		// pitch
 		if (iDeltaY != 0)
 		{
-			mMat = glm::axisAngleMatrix( vRight.xyz(), (float)-iDeltaY / 150.0f );
+			mMat = glm::axisAngleMatrix( glm::vec3(vRight[3]), (float)-iDeltaY / 150.0f );
 			vRight = mMat * vRight;
 			vUp = mMat * vUp;
 			vForward = mMat * vForward;
