@@ -13,13 +13,12 @@ An OpenGL repo for exploring different rendering tricks and techniques.
     * Linux (Ubuntu 12.04)
       * cmake
         `sudo apt-get install cmake`
-      * OpenGL
-        `sudo apt-get install freeglut3-dev`
-      * Xorg-dev
-        `sudo apt-get install xorg-dev libglu1-mesa-dev`
+      * OpenGL & misc.
+        `sudo apt-get install freeglut3-dev xorg-dev`
         
   * Build with CMake
     ```bash
       cd build
       cmake ..
+      make
     ```
