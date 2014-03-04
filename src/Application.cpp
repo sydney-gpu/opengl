@@ -12,12 +12,10 @@ bool Application::create(const char* a_name, int a_width, int a_height, int a_ar
 	if (glfwInit() != GL_TRUE)
 		return false;
     
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
 	// create a windowed mode window and its OpenGL context
 	m_window = glfwCreateWindow(a_width, a_height, a_name, nullptr, nullptr);
@@ -27,16 +25,16 @@ bool Application::create(const char* a_name, int a_width, int a_height, int a_ar
 		return false;
 	}
     
-    int major = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MAJOR);
-    int minor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MINOR);
-    int revision = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_REVISION);
-    printf("GL %i.%i.%i\n",major,minor,revision);
+	int major = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MAJOR);
+	int minor = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_VERSION_MINOR);
+	int revision = glfwGetWindowAttrib(m_window, GLFW_CONTEXT_REVISION);
+	printf("GL %i.%i.%i\n",major,minor,revision);
 
 	// make the window's context current
 	glfwMakeContextCurrent(m_window);
 
 	// initialise glew systems to wrangle GL extensions
-    glewExperimental = GL_TRUE;
+   	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
 		glfwTerminate();
